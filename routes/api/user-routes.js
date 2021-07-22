@@ -4,7 +4,9 @@ const {User} = require('../../models')
 //GET request /api/users/ when the client makes a GET request to /api/users, we will select all users from the user table in the database and send it back as JSON.
 router.get('/', (req,res) => {
 // access our user model and run the findAll() method 
-User.findAll().then(dbUserData => res.json(dbUserData)).catch(err => {
+User.findAll({
+    attributes: {exclude:['password']}
+}).then(dbUserData => res.json(dbUserData)).catch(err => {
     console.log(err);
     res.status(500).json(err)
     })
@@ -12,7 +14,9 @@ User.findAll().then(dbUserData => res.json(dbUserData)).catch(err => {
 
 // request /api/users/1
 router.get('/:id', (req,res) => {
-User.findOne({where:{id:req.params.id}})
+User.findOne({
+    attributes:{exclude:['password']},
+    where:{id:req.params.id}})
 .then(
     dbUserData => {
         if (!dbUserData) {
@@ -33,26 +37,19 @@ User.findOne({where:{id:req.params.id}})
 })
 
 //POST request /api/users
-router.post('/', (req,res) => {
-// expects {username: "lernantino", email: "lern@email.com", password: "password"}
-User.create(
-    {
-        username:'TestUser1',
-        email:'testuser@email.com',
-        password:'password'
-    }
-)
-.then(dbUserData => res.json(dbUserData))
-.catch(err => {
-    console.log(err); 
-    res.status(500).json(err);
-})
-})
-
-//POST request /api/users/1
-router.post('/:id', (req,res) => {
-
-})
+router.post('/', (req, res) => {
+    // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
+    User.create({
+      username: req.body.username,
+      email: req.body.email,
+      password: req.body.password
+    })
+      .then(dbUserData => res.json(dbUserData))
+      .catch(err => {
+        console.log(err);
+        res.status(500).json(err);
+      });
+  });
 
 //Put request /api/users/1 to update a record
 router.put('/:id', (req,res) => {

@@ -4,12 +4,11 @@ const Sequelize = require('sequelize')
 require('dotenv').config()
 // All we need it to do here is execute when we use connection.js and all of the data in the .env file will be made available at process.env.<ENVIRONMENT-VARIABLE-NAME>.
 
-const sequelize = new Sequelize(process.env.just_tech_news_db,process.env.root,process.env.password, {
-    host: 'localhos',
-    dialect: 'mysql',
-    port: '3306'
+const sequelize = new Sequelize(process.env.DB_NAME,process.env.DB_USER,process.env.DB_PW, {
+    host:'localhost',
+    dialect:'mysql',
+    port:'3306'
 })
-
 module.exports = sequelize;
 
 // All we're doing here is importing the base Sequelize class and using it to create a new connection to the database. 
