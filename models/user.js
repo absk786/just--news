@@ -3,9 +3,7 @@ const sequelize = require('../config/connection');
 
 //create user model
 class User extends Model {
-
 }
-
 //define table columns and configuration
 User.init(
     //table column definitions go here start of parent object
@@ -30,6 +28,14 @@ User.init(
             //if allowNull is set to false we can run our data through validators before creating tjhe table data
             validate: {
                 isEmail:true
+            }
+        },
+        //define a passwor column
+        password: {
+            type: DataTypes.STRING,
+            allowNull:false,
+            validate: {
+                len: [4] //lenght must be 4 chars long
             }
         }
 },
@@ -64,3 +70,6 @@ module.exports = User;
 // passing in two objects as arguments. The first object will
 //  define the columns and data types for those columns.
 //  The second object it accepts configures certain options for the table.
+
+// Each column's definition gets its own type definition, in which we use the imported Sequelize DataTypes object to define what type of data it will be.
+// Every time we extend a class from the Sequelize Model class, that new class (or model, in this case) inherits a number of methods for creating, reading, updating, and deleting data from a database. The .init() method we execute after is the part that actually provides context as to how those inherited methods should work.
