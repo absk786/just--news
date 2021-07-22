@@ -1,5 +1,6 @@
 const {Model, DataTypes} = require('sequelize');
 const sequelize = require('../config/connection');
+const bcrypt = require('bcrypt')
 
 //create user model
 class User extends Model {
@@ -40,7 +41,26 @@ User.init(
         }
 },
 //finish of parent object
+//use beforeCreate() hook to execute bcryt has fxn, we pass in userdata object
+//that contans the plaintext password in the password property. we also pass in
+//salt round value of 10. this is then passed to the Promis object as newUserData object
+//with a hashed password property. the return statement the exits out of the fxn
+// returning the hashed pwd in newUserData fxn
     {
+        hooks: {// set up beforeCreate lifecycle hook functionality
+            async beforeCreate(newUserData) {
+                newUserData.password = await bcrypt.hash(newUserData.password, 10);
+                return newUserData;
+              },
+
+            //set up beforeUpdate lifecycle "hook" fxnality
+            async beforeUpdate(updatedUserData) {
+                updatedUserData.password = await bcrypt.hash(updatedUserData.password, 10)
+                return updatedUserData;
+            }
+              
+        },
+        
         //table configuration options go here (https://sequelize.org/v5/manual/models-definition.html#configuration))
 
         //pass in our imported sequalize connection (the direct connection to our db)
