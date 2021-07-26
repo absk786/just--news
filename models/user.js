@@ -3,7 +3,13 @@ const sequelize = require('../config/connection');
 const bcrypt = require('bcrypt')
 
 //create user model
+// checkPassword that takes in the plaintext password retrieved from the client request at req.body.email and compares that with the hashed password. 
 class User extends Model {
+    // set up method to run on instance data (per user) to check password
+    checkPassword(loginPw) {
+        // Using the keyword this, we can access this user's properties, including the password, which was stored as a hashed string.
+        return bcrypt.compareSync(loginPw,this.password);
+    }
 }
 //define table columns and configuration
 User.init(
@@ -52,7 +58,6 @@ User.init(
                 newUserData.password = await bcrypt.hash(newUserData.password, 10);
                 return newUserData;
               },
-
             //set up beforeUpdate lifecycle "hook" fxnality
             async beforeUpdate(updatedUserData) {
                 updatedUserData.password = await bcrypt.hash(updatedUserData.password, 10)

@@ -51,6 +51,29 @@ router.post('/', (req, res) => {
       });
   });
 
+//login authentication
+// We queried the User table using the findOne() method for the email entered by the user and assigned it to req.body.email.
+router.post('/login', (req, res) => {
+    // expects {email: 'lernantino@gmail.com', password: 'password1234'}
+      User.findOne({
+        where: {
+          email: req.body.email
+        }
+      }).then(dbUserData => {
+        if (!dbUserData) {
+          res.status(400).json({ message: 'No user with that email address!' });
+          return;
+        }
+
+        // Verify user
+        const validPassword = dbUserData.checkPassword(req.body.password)
+        if (!validPassword) {
+            res.status(400).json({messege:"incorrect password"})
+        }
+        res.json({ user:dbUserData, messege:"you are now logged in"})
+      });  
+    });
+
 //Put request /api/users/1 to update a record
 router.put('/:id', (req,res) => {
 // expects {username: "lernantino", email: "lern@email.com", password: "password"}
