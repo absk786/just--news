@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const {User, Post, Vote} = require('../../models')
+const {User, Post, Vote, Comment} = require('../../models')
 
 //GET request /api/users/ when the client makes a GET request to /api/users, we will select all users from the user table in the database and send it back as JSON.
 router.get('/', (req,res) => {
@@ -12,24 +12,35 @@ User.findAll({
     })
 })
 
-// request /api/users/1
+// request /api/users/:id
 router.get('/:id', (req,res) => {
-User.findOne({
-    attributes:{exclude:['password']},
-    where:{id:req.params.id},
-    include:[
-        {
-            model:Post,
-            attributes:['id','title','post_url','created_at']
+    User.findOne({
+        attributes: { exclude: ['password'] },
+        where: {
+          id: req.params.id
         },
-        {
-            model:Post,
-            attributes:['title'],
-            through:Vote,
-            as: 'voted_posts' //Now when we query a user, we can see which posts a user has created and which posts a user has voted on, which will come under the property name voted_posts, so that we know which set of data is which.
-        }
-    ]
-})
+        include: [
+          {
+            model: Post,
+            attributes: ['id', 'title', 'post_url', 'created_at']
+          },
+          // include the Comment model here:
+          {
+            model: Comment,
+            attributes: ['id', 'comment_text', 'created_at'],
+            include: {
+              model: Post,
+              attributes: ['title']
+            }
+          },
+          {
+            model: Post,
+            attributes: ['title'],
+            through: Vote,
+            as: 'voted_posts'
+          }
+        ]
+      })
 .then(
     dbUserData => {
         if (!dbUserData) {
