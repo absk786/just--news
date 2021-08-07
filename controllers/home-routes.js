@@ -39,4 +39,10 @@ router.get('/', (req, res) => {
     });
 });
 
+//get the login and signup form
+router.get('/login', (req,res) =>{
+res.render('login');
+}
+)
+
 module.exports = router;
