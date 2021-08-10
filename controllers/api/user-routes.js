@@ -60,6 +60,7 @@ router.get('/:id', (req,res) => {
 )
 })
 
+
 //POST request /api/users
 router.post('/', (req, res) => {
     // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
@@ -171,8 +172,6 @@ User.destroy({
     res.status(500).json(err)
 })
 })
-
-
 
 module.exports = router;
 
