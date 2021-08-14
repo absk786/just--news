@@ -60,7 +60,6 @@ router.get('/:id', (req,res) => {
 )
 })
 
-
 //POST request /api/users
 router.post('/', (req, res) => {
     // expects {username: 'Lernantino', email: 'lernantino@gmail.com', password: 'password1234'}
@@ -71,11 +70,11 @@ router.post('/', (req, res) => {
     })
       .then(dbUserData =>{
         req.session.save(()=> { //making sure the session is created before we send the response back so we are wrapping the variables in callback
-
           req.session.user_id =  dbUserData.id;
           req.session.username =  dbUserData.username;
           req.session.loggedIn =  true;
 
+          res.json(dbUserData)
         })
       }
         
@@ -104,6 +103,7 @@ router.post('/login', (req, res) => {
         const validPassword = dbUserData.checkPassword(req.body.password)
         if (!validPassword) {
             res.status(400).json({messege:"incorrect password"})
+            return;
         }
 
         req.session.save(()=>{
