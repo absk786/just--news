@@ -28,14 +28,11 @@ router.get('/', (req, res) => {
       }
     ]
   })
-    .then(dbPostData => { //serialisation of data formats data from mysql to regular json\
-      console.log(dbPostData)
-
+    .then(dbPostData => {
       const posts = dbPostData.map(post => post.get({ plain: true }));
 
-      console.log(posts)
       res.render('homepage', {
-     posts,
+        posts,
         loggedIn: req.session.loggedIn
       });
     })

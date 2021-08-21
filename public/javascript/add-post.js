@@ -5,17 +5,18 @@ async function newFormHandler (event) {
     console.log('new form handler function called')
     const title = document.querySelector('input[name="post-title"]').value
     const post_url = document.querySelector('input[name="post-url"]').value
-
-    const response = await fetch ('/api/posts', {
-        method:'POST',
+    
+    const response = await fetch(`/api/posts`, {
+        method: 'POST',
         body: JSON.stringify({
-            title,
-            post_url
+          title,
+          post_url
         }),
-        headers:{
-            'Content-Type':'application/json'
-        }
-    })
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+      ;
 
     if(response.ok) {
         document.location.replace('/dashboard');
