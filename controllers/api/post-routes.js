@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const sequelize = require('../../config/connection');
 const { Post, User, Vote, Comment } = require('../../models');
-
+const withAuth = require('../../utils/auth');
 
 // get all users (the raw query: SELECT `post`.`id`, `post`.`post_url`, `post`.`title`, `post`.`created_at`, (SELECT COUNT(*) FROM vote WHERE post.id = vote.post_id) AS `vote_count`, `comments`.`id` AS `comments.id`, `comments`.`comment_text` AS `comments.comment_text`, `comments`.`post_id` AS `comments.post_id`, `comments`.`user_id` AS `comments.user_id`, `comments`.`created_at` AS `comments.created_at`, `comments->user`.`id` AS `comments.user.id`, `comments->user`.`username` AS `comments.user.username`, `user`.`id` AS `user.id`, `user`.`username` AS `user.username` FROM `post` AS `post` LEFT OUTER JOIN `comment` AS `comments` ON `post`.`id` = `comments`.`post_id` LEFT OUTER JOIN `user` AS `comments->user` ON `comments`.`user_id` = `comments->user`.`id` LEFT OUTER JOIN `user` AS `user` ON `post`.`user_id` = `user`.`id` ORDER BY `post`.`created_at` DESC;)
 router.get('/', (req, res) => {
@@ -71,7 +71,7 @@ router.get('/:id', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
+router.post('/', withAuth, (req, res) => {
   // expects {title: 'Taskmaster goes public!', post_url: 'https://taskmaster.com/press', user_id: 1}
   Post.create({
     title: req.body.title,
@@ -85,21 +85,16 @@ router.post('/', (req, res) => {
     });
 });
 
-router.put('/upvote', (req, res) => {
-  // make sure the session exists first
-  if (req.session) {
-    // pass session id along with all destructured properties on req.body
-    Post.upvote({ ...req.body, user_id: req.session.user_id }, { Vote, Comment, User })
-      .then(updatedVoteData => res.json(updatedVoteData))
-      .catch(err => {
-        console.log(err);
-        res.status(500).json(err);
-      });
-  }
-}); 
+router.put('/upvote', withAuth, (req, res) => {
+  // custom static method created in models/Post.js
+  Post.upvote({ ...req.body, user_id: req.session.user_id }, { Vote, Comment, User })
+    .then(updatedVoteData => res.json(updatedVoteData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
 //First, we're checking that a session exists before we even touch the database. Then if a session does exist, we're using the saved user_id property on the session to insert a new record in the vote table.
-
-
 
 router.put('/:id', (req, res) => {
   Post.update(
@@ -125,7 +120,8 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+//delete post
+router.delete('/:id', withAuth, (req, res) => {
   Post.destroy({
     where: {
       id: req.params.id

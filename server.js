@@ -1,39 +1,42 @@
-const express = require('express')
-const routes = require('./controllers')
-const sequelize = require('./config/connection');
-const app = express()
-const PORT = process.env.PORT||3001;
-const path = require('path')
-const exphbs = require('express-handlebars')
-const hbs = exphbs.create({})
-const session = require('express-session')
+const path = require('path');
+const express = require('express');
+const session = require('express-session');
+const exphbs = require('express-handlebars');
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+const sequelize = require("./config/connection");
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const sess = {
-    secret: 'Super secret secret',
-    cookie: [],
-    resave: false,
-    saveUninitialized: true,
-    store: new SequelizeStore({
-        db:sequelize
-    })
-}
+  secret: 'Super secret secret',
+  cookie: {},
+  resave: false,
+  saveUninitialized: true,
+  store: new SequelizeStore({
+    db: sequelize
+  })
+};
 
-app.use(session(sess))
-app.use(express.json())
-app.use(express.urlencoded({extended:true}))
+app.use(session(sess));
 
-//turn on routes
+const helpers = require('./utils/helpers');
+
+const hbs = exphbs.create({ helpers });
+
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(routes);
 
-app.engine('handlebars', hbs.engine)
-app.set('view engine', 'handlebars')
+app.use(require('./controllers/'));
 
-//turn on connection to db and server
-sequelize.sync({force:false}).then(() => {
-app.listen(PORT, () => console.log('now listening'))
-})
+sequelize.sync({ force: true }).then(() => {
+  app.listen(PORT, () => console.log('Now listening'));
+});
 
 // the sycn means that this is a sequalize taking the models and connecting 
 // themselves to asociated db TableHints. if it doesnt find a table it

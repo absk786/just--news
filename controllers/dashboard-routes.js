@@ -1,9 +1,11 @@
 const router = require('express').Router();
 const sequelize = require('../config/connection');
 const { Post, User, Comment, Vote } = require('../models');
+const withAuth =  require('../utils/auth')
 
+//When withAuth() calls next(), it will call the next (anonymous) function. However, if withAuth() calls res.redirect(), there is no need for the next function to be called, because the response has already been sent.
 // get all posts for dashboard
-router.get('/', (req, res) => {
+router.get('/', withAuth, (req, res) => {
   console.log(req.session);
   console.log('======================');
   Post.findAll({
@@ -42,7 +44,9 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/edit/:id', (req, res) => {
+
+
+router.get('/edit/:id', withAuth, (req, res) => {
   Post.findByPk(req.params.id, {
     attributes: [
       'id',
