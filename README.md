@@ -1,5 +1,4 @@
 
-
 # Project Title: Online Social Blog
 ![badmath](https://img.shields.io/github/languages/top/nielsenjared/badmath)
 
