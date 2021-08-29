@@ -23,9 +23,6 @@
 ### Installation: 
 * sequelize, express, express-session and more
  
-### Usage: 
-* undefined
-
 ### Languages: 
 * JavaScript,HTML,CSS,ES6,Node
 
@@ -33,7 +30,7 @@
 * MIT [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ### Features: 
-* Many features related to perform CRUD operations
+* Many features related to performing CRUD operations
 
 ### Tests: 
 * There are some tests for this application
