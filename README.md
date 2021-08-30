@@ -5,6 +5,7 @@
 ## Name: Abdul Khalil
 
 ## [GitHub](https://github.com/absk786)
+## [Link to app](https://just--news.herokuapp.com/)
 
 ## Table of Contents:
 * [Description](https://github.com/absk786/assignment7/blob/main/README.md#Description)
